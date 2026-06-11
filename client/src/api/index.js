@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({ 
+  baseURL: import.meta.env.VITE_API_URL || 'https://ycc-app-server.onrender.com/api' 
+});
 
 // Batches
 export const getBatches = () => API.get('/batches');

@@ -29,10 +29,10 @@ router.post('/signup', async (req, res) => {
       await sendVerificationEmail(email, name, verifyToken);
     } catch (mailErr) {
       console.error('Mail error:', mailErr.message);
-      // Don't fail signup if email fails
     }
     res.status(201).json({ message: 'Account created! Please check your email to verify your account.' });
   } catch (err) {
+    console.error('Signup error:', err);
     res.status(500).json({ message: err.message });
   }
 });

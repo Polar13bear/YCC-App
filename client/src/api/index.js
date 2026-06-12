@@ -4,6 +4,33 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://ycc-app-server.onrender.com/api' 
 });
 
+// Attach token to every request
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('ycc_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// Redirect to login on 401
+API.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('ycc_token');
+      localStorage.removeItem('ycc_user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(err);
+  }
+);
+
+// Auth
+export const signup = (data) => API.post('/auth/signup', data);
+export const login = (data) => API.post('/auth/login', data);
+export const forgotPassword = (data) => API.post('/auth/forgot-password', data);
+export const resetPassword = (data) => API.post('/auth/reset-password', data);
+export const getMe = () => API.get('/auth/me');
+
 // Batches
 export const getBatches = () => API.get('/batches');
 export const getBatch = (id) => API.get(`/batches/${id}`);

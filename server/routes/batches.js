@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Batch = require('../models/Batch');
 const Student = require('../models/Student');
+const { protect } = require('../middleware/auth');
 
 // GET all batches
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const batches = await Batch.find().sort({ createdAt: -1 });
     // Add student count to each batch
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET single batch
-router.get('/:id', async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
   try {
     const batch = await Batch.findById(req.params.id);
     if (!batch) return res.status(404).json({ message: 'Batch not found' });
@@ -30,7 +31,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create batch
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const batch = new Batch(req.body);
     const saved = await batch.save();
@@ -41,7 +42,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update batch
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
   try {
     const updated = await Batch.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: 'Batch not found' });
@@ -52,7 +53,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE batch
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
     await Batch.findByIdAndDelete(req.params.id);
     res.json({ message: 'Batch deleted' });

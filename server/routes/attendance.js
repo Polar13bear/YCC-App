@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Attendance = require('../models/Attendance');
 const Student = require('../models/Student');
+const { protect } = require('../middleware/auth');
 
 // GET attendance for a batch on a date
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const { batch, date } = req.query;
     const filter = {};
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET attendance stats for a student
-router.get('/stats/:studentId', async (req, res) => {
+router.get('/stats/:studentId', protect, async (req, res) => {
   try {
     const { studentId } = req.params;
     const student = await Student.findById(studentId);
@@ -45,7 +46,7 @@ router.get('/stats/:studentId', async (req, res) => {
 });
 
 // GET batch attendance summary
-router.get('/summary/:batchId', async (req, res) => {
+router.get('/summary/:batchId', protect, async (req, res) => {
   try {
     const { batchId } = req.params;
     const records = await Attendance.find({ batch: batchId }).sort({ date: -1 });
@@ -56,7 +57,7 @@ router.get('/summary/:batchId', async (req, res) => {
 });
 
 // POST mark/save attendance
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { batch, date, records } = req.body;
     const existing = await Attendance.findOne({ batch, date });

@@ -16,9 +16,15 @@ API.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('ycc_token');
-      localStorage.removeItem('ycc_user');
-      window.location.href = '/login';
+      const isAuthRoute = window.location.pathname === '/login' || 
+                          window.location.pathname === '/signup' ||
+                          window.location.pathname === '/forgot-password' ||
+                          window.location.pathname === '/verify-email';
+      if (!isAuthRoute) {
+        localStorage.removeItem('ycc_token');
+        localStorage.removeItem('ycc_user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }
